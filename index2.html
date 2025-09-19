@@ -16,89 +16,125 @@
         body {
             font-family: 'Inter', sans-serif;
         }
-        /* Simple transition for a smoother UI feel */
-        textarea, input, button {
-            transition: all 0.2s ease-in-out;
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1f2937; /* gray-800 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4b5563; /* gray-600 */
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6b7280; /* gray-500 */
         }
     </style>
 </head>
-<body class="bg-gray-900 text-gray-200 flex items-center justify-center min-h-screen p-4">
+<body class="bg-gray-900 text-gray-200 flex items-center justify-center min-h-screen p-4 bg-gradient-to-br from-gray-900 via-gray-900 to-blue-900/50">
 
-    <div class="w-full max-w-2xl mx-auto">
-        <div class="bg-gray-800 rounded-xl shadow-2xl p-6 md:p-8">
-            <div class="text-center mb-8">
-                <h1 class="text-3xl md:text-4xl font-bold text-white">AES Encryption Tool</h1>
-                <p class="text-gray-400 mt-2">Secure your text with password-based encryption.</p>
+    <div class="w-full max-w-2xl mx-auto bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 rounded-2xl shadow-2xl p-6 md:p-8">
+        <div class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent pb-2">
+                AES Encryption Tool
+            </h1>
+            <p class="text-gray-400 mt-2">Secure your text with industry-standard encryption.</p>
+        </div>
+
+        <!-- Main controls -->
+        <div class="space-y-6">
+            <div>
+                <label for="inputText" class="block text-sm font-medium text-gray-300 mb-2">Your Text</label>
+                <textarea id="inputText" rows="5" class="w-full bg-gray-900/70 border border-gray-700 rounded-lg p-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-500 transition duration-300"></textarea>
             </div>
 
-            <!-- Main controls -->
-            <div class="space-y-6">
-                <div>
-                    <label for="inputText" class="block text-sm font-medium text-gray-300 mb-2">Your Text</label>
-                    <textarea id="inputText" rows="5" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-500" placeholder="Enter the text to encrypt or decrypt..."></textarea>
-                </div>
-
-                <div>
-                    <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
-                    <input type="password" id="password" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Your secret password">
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="flex flex-col sm:flex-row gap-4">
-                    <button id="encryptBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-blue-500">
-                        Encrypt
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                <div class="relative">
+                    <input type="password" id="password" class="w-full bg-gray-900/70 border border-gray-700 rounded-lg p-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-300 pr-10" placeholder="Your secret password">
+                    <button id="togglePassword" type="button" class="absolute inset-y-0 right-0 px-3 flex items-center text-gray-400 hover:text-gray-200">
+                        <!-- Eye Icon -->
+                        <svg id="eyeIcon" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                        </svg>
+                        <!-- Eye Off Icon (hidden by default) -->
+                         <svg id="eyeOffIcon" class="h-5 w-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7 1.274-4.057 5.064-7 9.542-7 .847 0 1.67.127 2.452.364m-6.024 4.456A3 3 0 009.75 12.556M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 2l20 20" />
+                        </svg>
                     </button>
-                    <button id="decryptBtn" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-gray-500">
-                        Decrypt
-                    </button>
-                </div>
-
-                <!-- Output Section -->
-                <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <label for="outputText" class="block text-sm font-medium text-gray-300">Result</label>
-                        <button id="copyBtn" class="text-sm text-blue-400 hover:text-blue-300 font-medium">Copy</button>
-                    </div>
-                    <textarea id="outputText" rows="5" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 placeholder-gray-500" placeholder="The result will appear here..." readonly></textarea>
                 </div>
             </div>
 
-            <!-- Divider -->
-            <hr class="border-gray-700 my-8">
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4">
+                <button id="encryptBtn" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-700 hover:to-cyan-600 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-cyan-400 transform hover:scale-105 transition-transform duration-200">
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z" clip-rule="evenodd" /></svg>
+                    Encrypt
+                </button>
+                <button id="decryptBtn" class="w-full flex items-center justify-center gap-2 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-gray-500 transform hover:scale-105 transition-transform duration-200">
+                    <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M10 8a2.5 2.5 0 100 5 2.5 2.5 0 000-5z" /><path fill-rule="evenodd" d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm0 3.5a1 1 0 00-1 1V9h2V5.5a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                    Decrypt
+                </button>
+            </div>
 
-            <!-- Storage Section -->
-            <div class="space-y-4">
-                 <h2 class="text-xl font-semibold text-white text-center">Save & Load Encrypted Messages</h2>
-                 <p class="text-center text-sm text-gray-500 -mt-2 mb-4">Messages are saved in your browser's local storage.</p>
+            <!-- Output Section -->
+            <div>
+                <div class="flex justify-between items-center mb-2">
+                    <label for="outputText" class="block text-sm font-medium text-gray-300">Result</label>
+                    <button id="copyBtn" class="flex items-center gap-1 text-sm text-blue-400 hover:text-blue-300 font-medium">
+                       <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM5 11a1 1 0 100 2h4a1 1 0 100-2H5z" /><path fill-rule="evenodd" d="M2 4a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H4a2 2 0 01-2-2V4zm2 1v10h12V5H4z" clip-rule="evenodd" /></svg>
+                        Copy
+                    </button>
+                </div>
+                <textarea id="outputText" rows="5" class="w-full bg-gray-900/70 border border-gray-700 rounded-lg p-3 text-gray-200 placeholder-gray-500" placeholder="The result will appear here..." readonly></textarea>
+            </div>
+        </div>
 
+        <!-- Divider -->
+        <hr class="border-gray-700 my-8">
+
+        <!-- Storage Section -->
+        <div class="space-y-4">
+             <h2 class="text-xl font-semibold text-white text-center">Save & Load Encrypted Messages</h2>
+             <p class="text-center text-sm text-gray-500 -mt-2 mb-4">Messages are saved securely in your browser.</p>
+
+             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                  <!-- Save Form -->
-                 <div class="flex items-center gap-4">
-                    <input type="text" id="tagInput" class="flex-grow w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter a tag to save result...">
-                    <button id="saveBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg">Save</button>
+                 <div class="flex items-center gap-2">
+                    <input type="text" id="tagInput" class="flex-grow w-full bg-gray-900/70 border border-gray-700 rounded-lg p-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter a tag...">
+                    <button id="saveBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold p-3 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path d="M5 4a2 2 0 012-2h6a2 2 0 012 2v2.5a.5.5 0 01-1 0V4a1 1 0 00-1-1H7a1 1 0 00-1 1v1.5a1 1 0 102 0V4h2v2.5a.5.5 0 01-1 0V4a.5.5 0 01.5-.5h1a.5.5 0 01.5.5v2.5a1 1 0 102 0V4h2v2.5a.5.5 0 01-1 0V4a1 1 0 00-1-1h-2a1 1 0 00-1 1v2.5a2.5 2.5 0 11-5 0V4z" /><path d="M3 9.5a.5.5 0 01.5-.5h13a.5.5 0 010 1h-13a.5.5 0 01-.5-.5zM3 12a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" /></svg>
+                    </button>
                  </div>
 
                  <!-- Load Form -->
-                 <div class="flex items-center gap-4">
-                    <select id="loadSelect" class="flex-grow w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                        <option value="">Select a tag to load...</option>
+                 <div class="flex items-center gap-2">
+                    <select id="loadSelect" class="flex-grow w-full bg-gray-900/70 border border-gray-700 rounded-lg p-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 appearance-none bg-no-repeat bg-right-8" style="background-image: url('data:image/svg+xml;charset=utf-8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 20 20%22 fill=%22%239ca3af%22><path fill-rule=%22evenodd%22 d=%22M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z%22 clip-rule=%22evenodd%22/%></svg>'); background-position: right 0.75rem center; background-size: 1.5em 1.5em;">
+                        <option value="">Select a saved message...</option>
                     </select>
-                    <button id="deleteBtn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg">Delete</button>
+                    <button id="deleteBtn" class="bg-red-600 hover:bg-red-700 text-white font-bold p-3 rounded-lg flex items-center justify-center">
+                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 012 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" /></svg>
+                    </button>
                  </div>
-            </div>
+             </div>
         </div>
     </div>
     
-    <!-- Custom Modal for Notifications -->
-    <div id="notificationModal" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
-        <div class="bg-gray-700 text-white py-4 px-6 rounded-lg shadow-lg text-center">
-            <p id="notificationMessage"></p>
-        </div>
+    <!-- Custom Toast Notification -->
+    <div id="notification" class="fixed bottom-5 right-5 bg-gray-700 text-white py-3 px-5 rounded-lg shadow-lg transform translate-x-[calc(100%+2rem)] transition-transform duration-300 ease-in-out">
+        <p id="notificationMessage"></p>
     </div>
 
 
     <script>
         const inputText = document.getElementById('inputText');
         const password = document.getElementById('password');
+        const togglePassword = document.getElementById('togglePassword');
+        const eyeIcon = document.getElementById('eyeIcon');
+        const eyeOffIcon = document.getElementById('eyeOffIcon');
         const encryptBtn = document.getElementById('encryptBtn');
         const decryptBtn = document.getElementById('decryptBtn');
         const outputText = document.getElementById('outputText');
@@ -107,19 +143,27 @@
         const saveBtn = document.getElementById('saveBtn');
         const loadSelect = document.getElementById('loadSelect');
         const deleteBtn = document.getElementById('deleteBtn');
-        const notificationModal = document.getElementById('notificationModal');
+        const notification = document.getElementById('notification');
         const notificationMessage = document.getElementById('notificationMessage');
         
         const STORAGE_KEY = 'aesEncryptedData';
 
         // --- Notification Function ---
-        function showNotification(message, duration = 2000) {
+        function showNotification(message, duration = 3000) {
             notificationMessage.textContent = message;
-            notificationModal.classList.remove('opacity-0', 'pointer-events-none');
+            notification.classList.remove('translate-x-[calc(100%+2rem)]');
             setTimeout(() => {
-                notificationModal.classList.add('opacity-0', 'pointer-events-none');
+                notification.classList.add('translate-x-[calc(100%+2rem)]');
             }, duration);
         }
+
+        // --- Toggle Password Visibility ---
+        togglePassword.addEventListener('click', () => {
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            eyeIcon.classList.toggle('hidden');
+            eyeOffIcon.classList.toggle('hidden');
+        });
 
         // --- Encryption/Decryption Core ---
         encryptBtn.addEventListener('click', () => {
@@ -151,10 +195,10 @@
                 if (decrypted) {
                     outputText.value = decrypted;
                 } else {
-                    showNotification('Decryption failed. Check your password or input text.');
+                    showNotification('Decryption failed. Check password/input.');
                 }
             } catch (e) {
-                showNotification('Decryption failed. The input may be invalid.');
+                showNotification('Decryption failed. Invalid input.');
                 console.error(e);
             }
         });
@@ -178,8 +222,9 @@
 
         function populateLoadSelect() {
             const data = getStoredData();
-            loadSelect.innerHTML = '<option value="">Select a tag to load...</option>';
-            for (const tag in data) {
+            loadSelect.innerHTML = '<option value="">Select a saved message...</option>';
+            const sortedTags = Object.keys(data).sort();
+            for (const tag of sortedTags) {
                 const option = document.createElement('option');
                 option.value = tag;
                 option.textContent = tag;
@@ -191,13 +236,10 @@
             const tag = tagInput.value.trim();
             const encryptedText = outputText.value;
             if (!tag || !encryptedText) {
-                showNotification('Please enter a tag and have encrypted text in the result box to save.');
+                showNotification('Enter a tag and encrypt text to save.');
                 return;
             }
             const data = getStoredData();
-            if (data[tag] && !confirm(`Tag "${tag}" already exists. Overwrite it?`)) {
-                return;
-            }
             data[tag] = encryptedText;
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
             tagInput.value = '';
@@ -210,7 +252,8 @@
             if (tag) {
                 const data = getStoredData();
                 inputText.value = data[tag] || '';
-                outputText.value = ''; // Clear output for decryption
+                outputText.value = ''; 
+                password.focus();
             }
         });
         
@@ -223,8 +266,10 @@
             const data = getStoredData();
             delete data[tag];
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-            inputText.value = '';
-            outputText.value = '';
+            if(inputText.value === data[tag]) {
+                inputText.value = '';
+                outputText.value = '';
+            }
             populateLoadSelect();
             showNotification(`Deleted tag: "${tag}"`);
         });
