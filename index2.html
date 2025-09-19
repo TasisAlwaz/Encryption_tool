@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AES Encryption Tool</title>
+    <!-- CryptoJS for AES Encryption -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Simple transition for a smoother UI feel */
+        textarea, input, button {
+            transition: all 0.2s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-gray-200 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-2xl mx-auto">
+        <div class="bg-gray-800 rounded-xl shadow-2xl p-6 md:p-8">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl md:text-4xl font-bold text-white">AES Encryption Tool</h1>
+                <p class="text-gray-400 mt-2">Secure your text with password-based encryption.</p>
+            </div>
+
+            <!-- Main controls -->
+            <div class="space-y-6">
+                <div>
+                    <label for="inputText" class="block text-sm font-medium text-gray-300 mb-2">Your Text</label>
+                    <textarea id="inputText" rows="5" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder-gray-500" placeholder="Enter the text to encrypt or decrypt..."></textarea>
+                </div>
+
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                    <input type="password" id="password" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Your secret password">
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button id="encryptBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-blue-500">
+                        Encrypt
+                    </button>
+                    <button id="decryptBtn" class="w-full bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-gray-500">
+                        Decrypt
+                    </button>
+                </div>
+
+                <!-- Output Section -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label for="outputText" class="block text-sm font-medium text-gray-300">Result</label>
+                        <button id="copyBtn" class="text-sm text-blue-400 hover:text-blue-300 font-medium">Copy</button>
+                    </div>
+                    <textarea id="outputText" rows="5" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 placeholder-gray-500" placeholder="The result will appear here..." readonly></textarea>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <hr class="border-gray-700 my-8">
+
+            <!-- Storage Section -->
+            <div class="space-y-4">
+                 <h2 class="text-xl font-semibold text-white text-center">Save & Load Encrypted Messages</h2>
+                 <p class="text-center text-sm text-gray-500 -mt-2 mb-4">Messages are saved in your browser's local storage.</p>
+
+                 <!-- Save Form -->
+                 <div class="flex items-center gap-4">
+                    <input type="text" id="tagInput" class="flex-grow w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Enter a tag to save result...">
+                    <button id="saveBtn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg">Save</button>
+                 </div>
+
+                 <!-- Load Form -->
+                 <div class="flex items-center gap-4">
+                    <select id="loadSelect" class="flex-grow w-full bg-gray-900 border border-gray-700 rounded-lg p-3 text-gray-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="">Select a tag to load...</option>
+                    </select>
+                    <button id="deleteBtn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg">Delete</button>
+                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Custom Modal for Notifications -->
+    <div id="notificationModal" class="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-gray-700 text-white py-4 px-6 rounded-lg shadow-lg text-center">
+            <p id="notificationMessage"></p>
+        </div>
+    </div>
+
+
+    <script>
+        const inputText = document.getElementById('inputText');
+        const password = document.getElementById('password');
+        const encryptBtn = document.getElementById('encryptBtn');
+        const decryptBtn = document.getElementById('decryptBtn');
+        const outputText = document.getElementById('outputText');
+        const copyBtn = document.getElementById('copyBtn');
+        const tagInput = document.getElementById('tagInput');
+        const saveBtn = document.getElementById('saveBtn');
+        const loadSelect = document.getElementById('loadSelect');
+        const deleteBtn = document.getElementById('deleteBtn');
+        const notificationModal = document.getElementById('notificationModal');
+        const notificationMessage = document.getElementById('notificationMessage');
+        
+        const STORAGE_KEY = 'aesEncryptedData';
+
+        // --- Notification Function ---
+        function showNotification(message, duration = 2000) {
+            notificationMessage.textContent = message;
+            notificationModal.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                notificationModal.classList.add('opacity-0', 'pointer-events-none');
+            }, duration);
+        }
+
+        // --- Encryption/Decryption Core ---
+        encryptBtn.addEventListener('click', () => {
+            const plainText = inputText.value;
+            const pass = password.value;
+            if (!plainText || !pass) {
+                showNotification('Please provide both text and a password.');
+                return;
+            }
+            try {
+                const encrypted = CryptoJS.AES.encrypt(plainText, pass).toString();
+                outputText.value = encrypted;
+            } catch (e) {
+                showNotification('Encryption failed.');
+                console.error(e);
+            }
+        });
+
+        decryptBtn.addEventListener('click', () => {
+            const cipherText = inputText.value;
+            const pass = password.value;
+            if (!cipherText || !pass) {
+                showNotification('Please provide encrypted text and a password.');
+                return;
+            }
+            try {
+                const bytes = CryptoJS.AES.decrypt(cipherText, pass);
+                const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+                if (decrypted) {
+                    outputText.value = decrypted;
+                } else {
+                    showNotification('Decryption failed. Check your password or input text.');
+                }
+            } catch (e) {
+                showNotification('Decryption failed. The input may be invalid.');
+                console.error(e);
+            }
+        });
+
+        // --- Clipboard ---
+        copyBtn.addEventListener('click', () => {
+            if (outputText.value) {
+                navigator.clipboard.writeText(outputText.value).then(() => {
+                    showNotification('Copied to clipboard!');
+                }).catch(err => {
+                    showNotification('Failed to copy.');
+                });
+            }
+        });
+
+        // --- Local Storage Management ---
+        function getStoredData() {
+            const data = localStorage.getItem(STORAGE_KEY);
+            return data ? JSON.parse(data) : {};
+        }
+
+        function populateLoadSelect() {
+            const data = getStoredData();
+            loadSelect.innerHTML = '<option value="">Select a tag to load...</option>';
+            for (const tag in data) {
+                const option = document.createElement('option');
+                option.value = tag;
+                option.textContent = tag;
+                loadSelect.appendChild(option);
+            }
+        }
+
+        saveBtn.addEventListener('click', () => {
+            const tag = tagInput.value.trim();
+            const encryptedText = outputText.value;
+            if (!tag || !encryptedText) {
+                showNotification('Please enter a tag and have encrypted text in the result box to save.');
+                return;
+            }
+            const data = getStoredData();
+            if (data[tag] && !confirm(`Tag "${tag}" already exists. Overwrite it?`)) {
+                return;
+            }
+            data[tag] = encryptedText;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            tagInput.value = '';
+            populateLoadSelect();
+            showNotification(`Saved message with tag: "${tag}"`);
+        });
+
+        loadSelect.addEventListener('change', () => {
+            const tag = loadSelect.value;
+            if (tag) {
+                const data = getStoredData();
+                inputText.value = data[tag] || '';
+                outputText.value = ''; // Clear output for decryption
+            }
+        });
+        
+        deleteBtn.addEventListener('click', () => {
+            const tag = loadSelect.value;
+            if (!tag) {
+                showNotification('Please select a tag to delete.');
+                return;
+            }
+            const data = getStoredData();
+            delete data[tag];
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            inputText.value = '';
+            outputText.value = '';
+            populateLoadSelect();
+            showNotification(`Deleted tag: "${tag}"`);
+        });
+        
+        // Initial population of the dropdown
+        document.addEventListener('DOMContentLoaded', populateLoadSelect);
+
+    </script>
+</body>
+</html>
+
