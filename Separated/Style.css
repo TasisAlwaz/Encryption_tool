@@ -1,0 +1,193 @@
+/* Import Tailwind CSS */
+@import url('https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css');
+
+/* --- Base Styles & Fonts --- */
+body {
+    background-color: #0d1117;
+    color: #c9d1d9;
+    font-family: 'Share Tech Mono', monospace;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1rem;
+    overflow: hidden;
+}
+
+/* --- Animated Background --- */
+.background-noise {
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    right: -50%;
+    bottom: -50%;
+    width: 200%;
+    height: 200%;
+    background: transparent url('https://assets.codepen.io/127738/noise.png') repeat 0 0;
+    background-repeat: repeat;
+    animation: bg-animation .2s infinite;
+    opacity: .9;
+    visibility: visible;
+}
+
+@keyframes bg-animation {
+    0% { transform: translate(0,0) }
+    10% { transform: translate(-5%,-5%) }
+    20% { transform: translate(-10%,5%) }
+    30% { transform: translate(5%,-10%) }
+    40% { transform: translate(-5%,15%) }
+    50% { transform: translate(-10%,5%) }
+    60% { transform: translate(15%,0) }
+    70% { transform: translate(0,10%) }
+    80% { transform: translate(-15%,0) }
+    90% { transform: translate(10%,5%) }
+    100% { transform: translate(5%,0) }
+}
+
+
+/* --- Main Terminal Container --- */
+.container {
+    background: rgba(13, 17, 23, 0.75);
+    backdrop-filter: blur(10px);
+    border: 1px solid #30363d;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.1), 0 0 40px rgba(0, 255, 255, 0.05);
+    animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* --- Terminal Header --- */
+.terminal-header {
+    background-color: #161b22;
+    padding: 0.75rem;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #30363d;
+}
+
+.terminal-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.terminal-buttons .button {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+.button.red { background-color: #ff5f56; }
+.button.yellow { background-color: #ffbd2e; }
+.button.green { background-color: #27c93f; }
+
+.terminal-title {
+    color: #8b949e;
+    font-size: 0.875rem;
+    text-align: center;
+    flex-grow: 1;
+    margin-right: 60px; /* Offset for buttons */
+}
+
+/* --- Glowing Text --- */
+.text-glow {
+    text-shadow: 0 0 5px #00e5e5, 0 0 10px #00e5e5, 0 0 15px #00e5e5;
+    color: #b3ffff;
+}
+
+/* --- Inputs & Textareas --- */
+.terminal-input {
+    background-color: #010409;
+    border: 1px solid #30363d;
+    border-radius: 4px;
+    padding: 0.75rem;
+    color: #c9d1d9;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.terminal-input::placeholder {
+    color: #484f58;
+}
+
+.terminal-input:focus {
+    outline: none;
+    border-color: #2f81f7;
+    box-shadow: 0 0 10px rgba(47, 129, 247, 0.5);
+}
+
+/* --- Buttons --- */
+.terminal-button {
+    font-family: 'Share Tech Mono', monospace;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    width: 100%;
+}
+
+.green-button {
+    background-color: rgba(35, 134, 54, 0.4);
+    border-color: #238636;
+    color: #3fb950;
+}
+.green-button:hover {
+    background-color: rgba(35, 134, 54, 0.6);
+    box-shadow: 0 0 10px #3fb950;
+}
+
+.blue-button {
+    background-color: rgba(47, 129, 247, 0.4);
+    border-color: #2f81f7;
+    color: #58a6ff;
+}
+.blue-button:hover {
+    background-color: rgba(47, 129, 247, 0.6);
+    box-shadow: 0 0 10px #58a6ff;
+}
+
+.red-button {
+    background-color: rgba(215, 58, 73, 0.4);
+    border-color: #d73a49;
+    color: #f85149;
+}
+
+.red-button:hover {
+    background-color: rgba(215, 58, 73, 0.6);
+    box-shadow: 0 0 10px #f85149;
+}
+
+.small-button {
+    padding: 0.75rem;
+}
+
+/* --- Select Dropdown --- */
+select.terminal-input {
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%232F81F7%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
+    background-repeat: no-repeat;
+    background-position: right 0.7em top 50%, 0 0;
+    background-size: 0.65em auto, 100%;
+}
+
+/* --- Notification Toast --- */
+.notification-toast {
+    position: fixed;
+    bottom: 1.25rem;
+    right: 1.25rem;
+    background-color: #161b22;
+    color: #c9d1d9;
+    padding: 0.75rem 1.25rem;
+    border-radius: 6px;
+    border: 1px solid #30363d;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.1);
+    transform: translateX(calc(100% + 2rem));
+    transition: transform 0.3s ease-in-out;
+}
